@@ -24,7 +24,7 @@ const active = ref(false);
             :key="name"
             :product="products[0]"
             :count="cartStore.itemGroupLength(name)"
-            @updateCount="cartStore.updateCount($event, name)"
+            @updateCount="cartStore.updateCount($event, products[0])"
             @clear="cartStore.clearGroup(name)"
           />
         </ul>

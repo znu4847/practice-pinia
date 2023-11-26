@@ -21,32 +21,22 @@ export const useCartStore = defineStore("CartStore", {
         state.items = state.items.filter((i) => i.name !== name);
       });
     },
-    updateCount(count, name) {
-      if (!count) {
-        this.clearGroup(name);
-        return;
-      }
-      const groupLength = this.itemGroupLength(name);
-      if (groupLength > count) {
-        this.items.splice(this.items.map((i) => i.name).lastIndexOf(name), 1);
-      } else {
-        const product = this.itemGroups[name][0];
-        this.items.push({ ...product });
-      }
+    updateCount(count, item) {
+      this.clearGroup(item.name);
+      this.addToCart(count, item);
     },
   },
   getters: {
     count: (state) => state.items.length,
     isNotEmpty: (state) => state.items.length !== 0,
-    itemGroups: (state) => groupBy(state.items, "name"),
+    itemGroups: (state) => {
+      const grouped = groupBy(state.items, "name");
+      const sorted = Object.keys(grouped).sort();
+      let inOrder = {};
+      sorted.forEach((key) => (inOrder[key] = grouped[key]));
+      return inOrder;
+    },
     itemGroupLength: (state) => (name) => state.itemGroups[name].length,
-    // priceTotal: (state) => {
-    //   let priceTotal = 0;
-    //   state.items
-    //     .map((item) => parseFloat(item.price))
-    //     .forEach((price) => (priceTotal += price));
-    //   return priceTotal;
-    // },
     priceTotal: (state) => state.items.reduce((p, c) => p + c.price, 0),
   },
 });
