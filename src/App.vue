@@ -23,7 +23,6 @@ cartStore.$onAction(({ name, store, args, after, onError }) => {
   <div class="container">
     <TheHeader />
     <div>
-      <input id="tete" v-model="text" type="text" />
       <div class="mb-5 flex justify-end">
         <AppButton @click="cartStore.undo">Undo</AppButton>
         <AppButton class="ml-2" @click="cartStore.redo">Redo</AppButton>
