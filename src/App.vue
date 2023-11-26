@@ -7,19 +7,27 @@ import { useCartStore } from "./stores/CartStore";
 import AppButton from "./components/AppButton.vue";
 const cartStore = useCartStore();
 const history = reactive([]);
-let isHistoryMode = ref(false);
+const isHistoryMode = ref(false);
 history.push(JSON.stringify(cartStore.$state));
+const future = reactive([]);
 cartStore.$subscribe((mutation, state) => {
-  if (isHistoryMode.value) {
-    return;
-  }
+  if (isHistoryMode.value) return;
   history.push(JSON.stringify(state));
+  future.splice(0, future.length); // reset future
 });
 const undo = () => {
-  isHistoryMode.value = true;
   if (history.length === 1) return;
-  history.pop();
+  isHistoryMode.value = true;
+  future.push(history.pop());
   cartStore.$state = JSON.parse(history.at(-1));
+  isHistoryMode.value = false;
+};
+const redo = () => {
+  const latestState = future.pop();
+  if (!latestState) return;
+  isHistoryMode.value = true;
+  history.push(latestState);
+  cartStore.$state = JSON.parse(latestState);
   isHistoryMode.value = false;
 };
 cartStore.$onAction(({ name, store, args, after, onError }) => {
@@ -42,8 +50,9 @@ let text = ref("");
   <div class="container">
     <TheHeader />
     <div>
-      <input v-model="text" type="text" />
+      <input id="tete" v-model="text" type="text" />
       <AppButton @click="undo()">undo</AppButton>
+      <AppButton @click="redo()">redo</AppButton>
     </div>
     <ul class="sm:flex flex-wrap lg:flex-nowrap gap-5">
       <ProductCard
