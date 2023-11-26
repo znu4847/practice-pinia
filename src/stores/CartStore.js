@@ -16,18 +16,24 @@ export const useCartStore = defineStore("CartStore", {
         }
       });
     },
+    clearGroup(name) {
+      this.$patch((state) => {
+        state.items = state.items.filter((i) => i.name !== name);
+      });
+    },
   },
   getters: {
     count: (state) => state.items.length,
     isNotEmpty: (state) => state.items.length !== 0,
     itemGroups: (state) => groupBy(state.items, "name"),
     itemGroupLength: (state) => (name) => state.itemGroups[name].length,
-    priceTotal: (state) => {
-      let priceTotal = 0;
-      state.items
-        .map((item) => parseFloat(item.price))
-        .forEach((price) => (priceTotal += price));
-      return priceTotal;
-    },
+    // priceTotal: (state) => {
+    //   let priceTotal = 0;
+    //   state.items
+    //     .map((item) => parseFloat(item.price))
+    //     .forEach((price) => (priceTotal += price));
+    //   return priceTotal;
+    // },
+    priceTotal: (state) => state.items.reduce((p, c) => p + c.price, 0),
   },
 });
