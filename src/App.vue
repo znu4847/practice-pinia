@@ -15,6 +15,13 @@ cartStore.$subscribe((mutation, state) => {
   }
   history.push(JSON.stringify(state));
 });
+const undo = () => {
+  isHistoryMode.value = true;
+  if (history.length === 1) return;
+  history.pop();
+  cartStore.$state = JSON.parse(history.at(-1));
+  isHistoryMode.value = false;
+};
 cartStore.$onAction(({ name, store, args, after, onError }) => {
   if (name === "addToCart") {
     after(() => {
@@ -27,17 +34,6 @@ cartStore.$onAction(({ name, store, args, after, onError }) => {
     });
   }
 });
-const undo = () => {
-  console.log("--- undo start");
-  console.log(history.length);
-  isHistoryMode = true;
-  if (history.length === 1) return;
-  history.pop();
-  console.log(history.at(-1));
-  cartStore.$state = JSON.parse(history.at(-1));
-  isHistoryMode = false;
-  console.log("--- undo end");
-};
 
 let text = ref("");
 </script>
