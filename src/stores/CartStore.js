@@ -21,6 +21,19 @@ export const useCartStore = defineStore("CartStore", {
         state.items = state.items.filter((i) => i.name !== name);
       });
     },
+    updateCount(count, name) {
+      if (!count) {
+        this.clearGroup(name);
+        return;
+      }
+      const groupLength = this.itemGroupLength(name);
+      if (groupLength > count) {
+        this.items.splice(this.items.map((i) => i.name).lastIndexOf(name), 1);
+      } else {
+        const product = this.itemGroups[name][0];
+        this.items.push({ ...product });
+      }
+    },
   },
   getters: {
     count: (state) => state.items.length,
