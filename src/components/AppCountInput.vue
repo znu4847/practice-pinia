@@ -5,7 +5,6 @@ defineProps({
 
 const emit = defineEmits(["update:modelValue", "input"]);
 const updateValue = (value) => {
-  console.log(value);
   if (value !== "") {
     emit("update:modelValue", value);
   }
